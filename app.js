@@ -1,6 +1,7 @@
 if (process.env.NODE_ENV !== "production") {
-    require("dotenv").config();
+	require("dotenv").config();
 }
+
 const express = require("express");
 const app = express();
 const path = require("path");
@@ -25,7 +26,7 @@ const db = mongoose.connection;
 
 db.on("error", console.error.bind(console, "Connection error:"));
 db.once("open", () => {
-    console.log("Database connected");
+	console.log("Database connected");
 });
 
 app.engine("ejs", ejsMate);
@@ -36,14 +37,14 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
 const sessionConfig = {
-    secret: "justasecret",
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        expires: Date.now() + 604800000,
-        maxAge: 604800000,
-        httpOnly: true,
-    },
+	secret: "justasecret",
+	resave: false,
+	saveUninitialized: true,
+	cookie: {
+		expires: Date.now() + 604800000,
+		maxAge: 604800000,
+		httpOnly: true,
+	},
 };
 app.use(session(sessionConfig));
 app.use(flash());
@@ -56,13 +57,14 @@ passport.use(new LocalStrategy(User.authenticate()));
 //passport local mongoose
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
 //setup flash
 
 app.use((req, res, next) => {
-    res.locals.currentUser = req.user;
-    res.locals.success = req.flash("success");
-    res.locals.error = req.flash("error");
-    next();
+	res.locals.currentUser = req.user;
+	res.locals.success = req.flash("success");
+	res.locals.error = req.flash("error");
+	next();
 });
 
 //Setup routes
@@ -71,20 +73,20 @@ app.use("/campgrounds/:id/reviews", reviewRoutes);
 app.use("/", userRoutes);
 
 app.get("/", (req, res) => {
-    res.render("home");
+	res.render("home");
 });
 
 //Errors handling
 app.all("*", (req, res, next) => {
-    next(new ExpressError("Page Not Found"), 404);
+	next(new ExpressError("Page Not Found"), 404);
 });
 
 app.use((err, req, res, next) => {
-    const { statusCode = 500 } = err;
-    if (!err.message) err.message = "Something went wrong!!!";
-    res.status(statusCode).render("error", { err });
+	const { statusCode = 500 } = err;
+	if (!err.message) err.message = "Something went wrong!!!";
+	res.status(statusCode).render("error", { err });
 });
 
 app.listen(8080, () => {
-    console.log("Serving on port 8080");
+	console.log("Serving on port 8080");
 });
